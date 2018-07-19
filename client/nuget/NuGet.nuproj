@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Package" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\version.props" />
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{0c773145-6449-4ffb-bc76-287f84bc9038}</ProjectGuid>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <TargetDir>$(SolutionDir)\$(Platform)\$(Configuration)\PackagesLocal\</TargetDir>
+    <PackageVersion>$(ClientLibraryAssemblyVersion)</PackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <NuSpec Include="..\ClientDecisionService\ClientDecisionService.nuspec" />
+    <NuSpec Include="..\JoinServerUploader\JoinServerUploader.nuspec" />
+    <NuSpec Include="..\MultiWorldTestingServiceContract\MultiWorldTestingServiceContract.nuspec" />
+  </ItemGroup>
+
+  <Target Name="Package">
+    <MakeDir Directories="$(TargetDir)" />
+    <Exec Command="$(SolutionDir)\.nuget\nuget pack %(NuSpec.Identity) -Version $(PackageVersion) -Prop &quot;Configuration=$(Configuration);Platform=$(Platform)&quot; -Prop SolutionDir=$(SolutionDir) -OutputDirectory $(TargetDir)" />
+    
+    <MakeDir Condition="'$(PublishLocal)' != ''" Directories="$(PublishLocal)" />
+    <Exec Condition="'$(PublishLocal)' != ''" Command="$(SolutionDir)\.nuget\nuget init $(TargetDir) $(PublishLocal)" />
+  </Target>
+</Project>
